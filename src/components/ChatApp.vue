@@ -4,7 +4,7 @@
 
     <div class="chat-container" v-if="isOpen">
       <div class="chat-header">
-        <div class="title">Bank Assistant</div>
+        <div class="title">Virtual Assistant</div>
         <button class="close-btn" @click="isOpen = false">✖</button>
       </div>
 
@@ -55,7 +55,7 @@ export default {
       try {
         // Example: fetch JSON from your backend or GitHub Pages
         const res = await fetch(
-          "https://bilawalHussain5646.github.io/prompts/bank-prompts.json"
+          "https://bilawalHussain5646.github.io/prompts/healthcare-prompts.json"
         );
         this.prompts = await res.json();
       } catch (err) {

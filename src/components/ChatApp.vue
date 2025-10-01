@@ -1,10 +1,10 @@
 <template>
   <div class="chat-widget" :class="{ open: isOpen }">
-    <div class="chat-toggle" @click="isOpen = !isOpen">💬</div>
+    <div class="chat-toggle" @click="toggleChat">💬</div>
 
     <div class="chat-container" v-if="isOpen">
       <div class="chat-header">
-        <div class="title">Virtual Assistant</div>
+        <div class="title">Bank Assistant</div>
         <button class="close-btn" @click="isOpen = false">✖</button>
       </div>
 
@@ -36,30 +36,47 @@
 </template>
 
 <script>
-import promptsData from "../data/healthcare-prompts.json";
-
 export default {
   data() {
     return {
       isOpen: false,
       messages: [],
       currentPromptId: "start",
-      prompts: promptsData,
+      prompts: {}, // will be loaded dynamically
     };
   },
   mounted() {
-    this.showPrompt(this.currentPromptId);
+    this.loadPrompts().then(() => {
+      this.showPrompt(this.currentPromptId);
+    });
   },
   methods: {
+    async loadPrompts() {
+      try {
+        // Example: fetch JSON from your backend or GitHub Pages
+        const res = await fetch(
+          "https://bilawalHussain5646.github.io/prompts/bank-prompts.json"
+        );
+        this.prompts = await res.json();
+      } catch (err) {
+        console.error("Error loading prompts:", err);
+      }
+    },
+
+    toggleChat() {
+      this.isOpen = !this.isOpen;
+      if (this.isOpen && this.messages.length === 0) {
+        this.showPrompt(this.currentPromptId);
+      }
+    },
+
     selectOption(option, msg) {
       msg.selectedOption = option;
       msg.disabled = true;
-
       this.messages.push({ text: option, type: "user" });
 
       const promptObj = this.prompts[this.currentPromptId];
       const nextId = promptObj.optionsMap?.[option];
-
       if (nextId) this.showPrompt(nextId);
     },
 
@@ -69,7 +86,7 @@ export default {
 
       this.currentPromptId = promptId;
 
-      const typingMsg = { text: "Typing...", type: "bot", typing: true };
+      const typingMsg = { text: "", type: "bot", typing: true };
       this.messages.push(typingMsg);
       this.scrollToBottom();
 
@@ -98,6 +115,10 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+/* same styles you had */
+</style>
 
 <style scoped>
 .chat-widget {
